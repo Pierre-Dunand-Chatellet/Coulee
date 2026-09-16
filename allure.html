@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calculateur d'allure — Coulée</title>
+<meta name="description" content="Estime ton temps sur 400, 800 ou 1500 m, compare-le au record du monde, calcule tes points World Aquatics et génère une séance à ton allure.">
+<meta name="theme-color" content="#060E1A">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<script>document.documentElement.className = 'js force-motion';</script>
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="css/coulee.css?v=20260916-3">
+</head>
+<body>
+
+<span id="top"></span>
+<a class="skip" href="#contenu">Aller au contenu</a>
+
+<header class="mini is-on">
+  <a class="mark" href="index.html">Coul<i>é</i>e</a>
+  <nav aria-label="Pages du site">
+    <a href="nages.html">Les 4 nages</a>
+    <a href="comparateur.html">Comparateur</a>
+    <a href="allure.html" aria-current="page">Allure</a>
+    <a href="disciplines.html">Disciplines</a>
+  </nav>
+</header>
+
+<main class="page" id="contenu">
+
+  <header class="page-head">
+    <p class="label reveal" style="--i:0">03 — Formule de Riegel</p>
+    <h1 class="reveal" style="--i:1">All<span class="dot">u</span>re</h1>
+    <p class="intro reveal" style="--i:2">
+      Entre un temps que tu as déjà nagé. Le calculateur estime ton temps sur une
+      distance plus longue et te donne les passages à viser pour tenir l'allure.
+    </p>
+  </header>
+
+  <div class="rope" aria-hidden="true"></div>
+
+  <section class="section" aria-labelledby="t-calc">
+    <div class="section-head">
+      <span class="label reveal" style="--i:0">01</span>
+      <h2 id="t-calc" class="reveal" style="--i:1">Ton temps estimé</h2>
+    </div>
+    <div class="pace">
+      <form class="reveal" style="--i:0" id="paceForm" novalidate>
+        <div class="field">
+          <label for="t1">Ton temps de référence</label>
+          <input id="t1" type="text" value="1:45" autocomplete="off" spellcheck="false" aria-describedby="t1-hint">
+          <span class="hint" id="t1-hint">Format <span class="mono">m:ss</span>, <span class="mono">m:ss.cc</span> ou en secondes (<span class="mono">38.5</span>).</span>
+        </div>
+        <div class="pair">
+          <div class="field">
+            <label for="d1">Sur</label>
+            <select id="d1">
+              <option value="50">50 m</option>
+              <option value="100" selected>100 m</option>
+              <option value="200">200 m</option>
+              <option value="400">400 m</option>
+              <option value="800">800 m</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="d2">Objectif</label>
+            <select id="d2">
+              <option value="100">100 m</option>
+              <option value="200">200 m</option>
+              <option value="400" selected>400 m</option>
+              <option value="800">800 m</option>
+              <option value="1500">1500 m</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="bassin">Bassin</label>
+          <select id="bassin">
+            <option value="25" selected>25 m — piscine municipale</option>
+            <option value="50">50 m — grand bassin</option>
+          </select>
+        </div>
+      </form>
+
+      <div class="out reveal" style="--i:1">
+        <p class="label" id="res-label">Temps estimé sur 400 m</p>
+        <output class="big" id="res-temps" for="t1 d1 d2">7:36</output>
+        <div class="stats">
+          <div><span class="label">Allure</span><output id="res-allure">1:54,1 /100 m</output></div>
+          <div><span class="label">Longueurs</span><output id="res-longueurs">16</output></div>
+          <div><span class="label">Vitesse</span><output id="res-vitesse">0,88 m/s</output></div>
+        </div>
+        <p class="label splits-head" id="res-split-label">Passages tous les 50 m, à allure constante</p>
+        <div class="splits" id="splits"></div>
+        <p class="formula">
+          T₂ = T₁ × (D₂ / D₁)<sup>1,06</sup><br>
+          L'exposant 1,06 a été établi pour la course à pied. Calculé sur les records
+          du monde de nage libre, il vaut plutôt 1,08 à 1,12 : en natation,
+          l'estimation est optimiste sur les longues distances. C'est un ordre de
+          grandeur pour se fixer un objectif, pas une promesse.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TOI CONTRE LE RECORD
+       ============================================================ -->
+  <section class="section needs-js" aria-labelledby="t-vs">
+    <div class="section-head">
+      <span class="label reveal" style="--i:0">02</span>
+      <h2 id="t-vs" class="reveal" style="--i:1">Toi contre le record</h2>
+      <span class="label reveal" style="--i:2">Nage libre, grand bassin</span>
+    </div>
+
+    <div class="controls reveal" style="--i:0">
+      <fieldset>
+        <legend class="label">Record</legend>
+        <div class="seg">
+          <input type="radio" name="sexe-rec" id="rec-h" value="H" checked><label for="rec-h">Hommes</label>
+          <input type="radio" name="sexe-rec" id="rec-f" value="F"><label for="rec-f">Dames</label>
+        </div>
+      </fieldset>
+      <button class="btn" type="button" id="vs-start">▶ Départ</button>
+      <span class="note vs-vitesse" id="vs-vitesse"></span>
+    </div>
+
+    <div class="race reveal" style="--i:1" id="vs-race" hidden></div>
+    <p class="vs-texte reveal" style="--i:2" id="vs-texte"></p>
+    <p class="visually-hidden" id="vs-status" aria-live="polite"></p>
+    <p class="note">Le record est nagé en bassin de 50 m. Si ton temps de référence vient d'un bassin de 25 m, il est plus rapide qu'en grand bassin : les virages font gagner du temps.</p>
+  </section>
+
+  <!-- ============================================================
+       TON NIVEAU
+       ============================================================ -->
+  <section class="section needs-js" aria-labelledby="t-niv">
+    <div class="section-head">
+      <span class="label reveal" style="--i:0">03</span>
+      <h2 id="t-niv" class="reveal" style="--i:1">Ton niveau</h2>
+      <span class="label reveal" style="--i:2">Barème World Aquatics 2026</span>
+    </div>
+    <div class="niveau">
+      <div class="reveal" style="--i:0">
+        <span class="big" id="niv-points">—</span>
+        <p id="niv-texte"></p>
+        <p class="note" id="niv-ref"></p>
+        <p class="formula">
+          Points = 1000 × (temps de base ÷ ton temps)³. Le temps de base est le record du
+          monde au 31 décembre 2025 : il vaut 1000 points. C'est le barème officiel qui
+          sert à comparer des performances sur des distances différentes. Il n'existe pas
+          de seuils officiels « débutant » ou « national » : l'échelle donne les
+          temps de chaque palier de 100 points, tels qu'imprimés dans la table 2026.
+        </p>
+      </div>
+      <ol class="echelle reveal" style="--i:1" id="niv-echelle" aria-label="Temps de chaque palier de points"></ol>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SÉANCE GÉNÉRÉE
+       ============================================================ -->
+  <section class="section needs-js" id="seance" aria-labelledby="t-sea">
+    <div class="section-head">
+      <span class="label reveal" style="--i:0">04</span>
+      <h2 id="t-sea" class="reveal" style="--i:1">Ta séance</h2>
+      <button class="btn no-print reveal" style="--i:2" type="button" id="seance-imprimer">Imprimer</button>
+    </div>
+    <p class="intro-seance reveal" style="--i:0" id="seance-resume"></p>
+    <div class="table-wrap reveal" style="--i:1">
+      <table class="seance">
+        <caption class="visually-hidden">Séance d'entraînement construite à partir de ton allure</caption>
+        <thead><tr><th scope="col">Bloc</th><th scope="col">Contenu</th><th scope="col" class="num">Distance</th><th scope="col" class="num">Départ</th></tr></thead>
+        <tbody id="seance-corps"></tbody>
+      </table>
+    </div>
+    <p class="note">Proposition générique construite à partir de ton allure estimée, pas un plan d'entraînement personnalisé. « Départ toutes les 1:45 » : tu repars quand le chrono atteint 1:45, le temps restant est ta récupération. Si tu t'entraînes en club, ton entraîneur reste la meilleure référence.</p>
+  </section>
+
+</main>
+
+<footer>
+  <span>Coulée — Pierre Dunand-Chatellet — <span class="mono">2026</span></span>
+  <a class="end" href="#top">↑ Haut de page</a>
+</footer>
+
+<script src="js/donnees.js?v=20260916-3"></script>
+<script src="js/site.js?v=20260916-3"></script>
+<script src="js/allure-outils.js?v=20260916-3"></script>
+<script src="js/allure.js?v=20260916-3"></script>
+</body>
+</html>

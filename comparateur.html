@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Comparateur — Coulée</title>
+<meta name="description" content="Les quatre records du monde du 50 m lancés dans la même piscine au même instant, et les calories brûlées par chaque nage selon ton poids.">
+<meta name="theme-color" content="#060E1A">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<script>document.documentElement.className = 'js force-motion';</script>
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="css/coulee.css?v=20260916-3">
+</head>
+<body>
+
+<span id="top"></span>
+<a class="skip" href="#contenu">Aller au contenu</a>
+
+<header class="mini is-on">
+  <a class="mark" href="index.html">Coul<i>é</i>e</a>
+  <nav aria-label="Pages du site">
+    <a href="nages.html">Les 4 nages</a>
+    <a href="comparateur.html" aria-current="page">Comparateur</a>
+    <a href="allure.html">Allure</a>
+    <a href="disciplines.html">Disciplines</a>
+  </nav>
+</header>
+
+<main class="page" id="contenu">
+
+  <header class="page-head">
+    <p class="label reveal" style="--i:0">02 — Records du monde, 50 m grand bassin</p>
+    <h1 class="reveal" style="--i:1">Compar<span class="dot">a</span>teur</h1>
+    <p class="intro reveal" style="--i:2">
+      Les quatre records du monde du 50 m, lancés dans la même piscine au même
+      instant. Le crawl touche le mur quand la brasse a encore plusieurs mètres à nager.
+    </p>
+  </header>
+
+  <div class="rope" aria-hidden="true"></div>
+
+  <!-- ============================================================
+       LA COURSE
+       ============================================================ -->
+  <section class="section" aria-labelledby="t-course">
+    <div class="section-head">
+      <h2 id="t-course" class="reveal" style="--i:0">La course</h2>
+    </div>
+
+    <div class="controls reveal" style="--i:1">
+      <fieldset>
+        <legend class="label">Records</legend>
+        <div class="seg">
+          <input type="radio" name="sexe" id="sexe-h" value="H" checked><label for="sexe-h">Hommes</label>
+          <input type="radio" name="sexe" id="sexe-f" value="F"><label for="sexe-f">Dames</label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend class="label">Vitesse de lecture</legend>
+        <div class="seg">
+          <input type="radio" name="vitesse" id="v1" value="1"><label for="v1">Temps réel</label>
+          <input type="radio" name="vitesse" id="v4" value="4" checked><label for="v4">× 4</label>
+        </div>
+      </fieldset>
+      <button class="btn" type="button" id="race-start">▶ Départ</button>
+    </div>
+
+    <!-- rempli par js/comparateur.js ; sans JS, le tableau ci-dessous suffit -->
+    <div class="race reveal" style="--i:2" id="race" hidden></div>
+    <p class="note" id="race-status" aria-live="polite"></p>
+
+    <div class="table-wrap reveal" style="--i:3">
+      <table>
+        <caption class="label" style="text-align:left;caption-side:top;padding-bottom:12px" id="table-caption">Records hommes</caption>
+        <thead>
+          <tr><th scope="col">Nage</th><th scope="col">Détenteur</th><th scope="col" class="num">Record</th><th scope="col" class="num">m/s</th><th scope="col" class="num">km/h</th><th scope="col" class="num">Écart à la nage libre</th></tr>
+        </thead>
+        <tbody id="race-table">
+          <tr><td><b>Nage libre</b></td><td>Cameron McEvoy <span class="muted">— Australie, 2026</span></td><td class="num rec">20,88 s</td><td class="num">2,39</td><td class="num">8,62</td><td class="num">référence</td></tr>
+          <tr><td><b>Papillon</b></td><td>Andriy Govorov <span class="muted">— Ukraine, 2018</span></td><td class="num rec">22,27 s</td><td class="num">2,25</td><td class="num">8,08</td><td class="num">−6,2 %</td></tr>
+          <tr><td><b>Dos</b></td><td>Kliment Kolesnikov <span class="muted">— Russie, 2023</span></td><td class="num rec">23,55 s</td><td class="num">2,12</td><td class="num">7,64</td><td class="num">−11,3 %</td></tr>
+          <tr><td><b>Brasse</b></td><td>Adam Peaty <span class="muted">— Royaume-Uni, 2017</span></td><td class="num rec">25,95 s</td><td class="num">1,93</td><td class="num">6,94</td><td class="num">−19,5 %</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ÉNERGIE
+       ============================================================ -->
+  <section class="section" aria-labelledby="t-kcal">
+    <div class="energy-head">
+      <h2 id="t-kcal" class="reveal" style="--i:0">Ce que ça brûle en une heure</h2>
+      <div class="field reveal" style="--i:1">
+        <label for="poids">Ton poids (kg)</label>
+        <input id="poids" type="number" min="30" max="150" step="1" value="65" inputmode="numeric" style="width:140px">
+      </div>
+    </div>
+    <div class="kcal reveal" style="--i:2" id="kcal">
+      <div class="top"><span class="label">Papillon</span><span class="big">897</span><span class="unit">kcal / heure</span></div>
+      <div><span class="label">Brasse</span><span class="big">670</span><span class="unit">kcal / heure</span></div>
+      <div><span class="label">Nage libre</span><span class="big">637</span><span class="unit">kcal / heure</span></div>
+      <div><span class="label">Dos</span><span class="big">618</span><span class="unit">kcal / heure</span></div>
+    </div>
+    <p class="note">
+      Estimation : MET × poids × durée, avec les valeurs du Compendium of Physical
+      Activities pour un entraînement soutenu (papillon 13,8 ; brasse 10,3 ;
+      nage libre rapide 9,8 ; dos 9,5). En nage de loisir, brasse, dos et
+      nage libre tombent entre 4,8 et 5,8 : environ moitié moins.
+    </p>
+  </section>
+
+</main>
+
+<footer>
+  <span>Coulée — Pierre Dunand-Chatellet — <span class="mono">2026</span></span>
+  <a class="end" href="#top">↑ Haut de page</a>
+</footer>
+
+<script src="js/donnees.js?v=20260916-3"></script>
+<script src="js/site.js?v=20260916-3"></script>
+<script src="js/comparateur.js?v=20260916-3"></script>
+</body>
+</html>

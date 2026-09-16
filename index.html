@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="fr" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Coulée — la natation, du plot au mur</title>
+<meta name="description" content="Les quatre nages, les records du monde du 50 m en course, un calculateur d'allure et les autres disciplines de la natation.">
+<meta name="theme-color" content="#060E1A">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<script>document.documentElement.className = 'js force-motion';</script>
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="css/coulee.css?v=20260916-3">
+</head>
+<body>
+
+<a class="skip" href="#contenu">Aller au contenu</a>
+
+<!-- barre fixe : apparaît une fois le plongeon joué et le hero quitté -->
+<header class="mini" id="mini">
+  <a class="mark" href="index.html" aria-current="page">Coul<i>é</i>e</a>
+  <nav aria-label="Pages du site">
+    <a href="nages.html">Les 4 nages</a>
+    <a href="comparateur.html">Comparateur</a>
+    <a href="allure.html">Allure</a>
+    <a href="disciplines.html">Disciplines</a>
+  </nav>
+</header>
+
+<!-- ============================================================
+     LA SCÈNE — plongeon piloté par le scroll
+     (extraite telle quelle de la maquette validée)
+     ============================================================ -->
+<section class="scene" id="scene">
+  <div class="stage" id="stage">
+
+    <!-- LE MONDE : c'est ce groupe que la caméra déplace -->
+    <div class="world" id="world">
+      <svg class="scene-svg" width="2700" height="1800" viewBox="-200 -400 2700 1800" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="depth" gradientUnits="userSpaceOnUse" x1="0" y1="540" x2="0" y2="1400">
+            <stop offset="0" stop-color="#0B2B4F"/>
+            <stop offset=".55" stop-color="#071A31"/>
+            <stop offset="1" stop-color="#060E1A"/>
+          </linearGradient>
+          <!-- corde de couloir : flotteurs alternés blanc / cyan.
+               y="527" cale le motif sur le haut du rail : sans ça, le rail
+               montre le bas d'une rangée et le haut de la suivante. -->
+          <pattern id="floats" x="0" y="527" width="68" height="26" patternUnits="userSpaceOnUse">
+            <ellipse cx="17" cy="13" rx="15" ry="11" fill="#EAF2FF"/>
+            <ellipse cx="51" cy="13" rx="15" ry="11" fill="#22E0C8"/>
+            <rect x="31" y="11" width="5" height="4" fill="#0B2B4F"/>
+            <rect x="65" y="11" width="6" height="4" fill="#0B2B4F"/>
+          </pattern>
+        </defs>
+
+        <!-- eau : elle s'arrête au mur (x=1900), pas au bord du viewBox -->
+        <rect x="-200" y="540" width="2100" height="860" fill="url(#depth)"/>
+        <!-- marquage de fond de bassin -->
+        <rect x="-200" y="1120" width="2100" height="46" fill="#04101D" opacity=".85"/>
+        <rect x="-200" y="1166" width="2100" height="3" fill="#22E0C8" opacity=".12"/>
+        <!-- surface -->
+        <rect x="-200" y="536" width="2100" height="3" fill="#22E0C8" opacity=".55"/>
+        <rect x="-200" y="539" width="2100" height="14" fill="#EAF2FF" opacity=".06"/>
+
+        <!-- corde de couloir, à la surface -->
+        <rect x="-200" y="527" width="2100" height="26" fill="url(#floats)"/>
+
+        <!-- écume : 7 chevrons, seule l'opacité est animée -->
+        <g id="splash" fill="none" stroke="#EAF2FF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+          <path class="ch" d="M -18,0 L 0,-16 L 18,0" transform="translate(1070,478) scale(1.15)"/>
+          <path class="ch" d="M -18,0 L 0,-16 L 18,0" transform="translate(1030,505) rotate(-12) scale(.9)"/>
+          <path class="ch" d="M -18,0 L 0,-16 L 18,0" transform="translate(1114,500) rotate(10)"/>
+          <path class="ch" d="M -18,0 L 0,-16 L 18,0" transform="translate(995,528) rotate(-22) scale(.7)"/>
+          <path class="ch" d="M -18,0 L 0,-16 L 18,0" transform="translate(1152,522) rotate(18) scale(.75)"/>
+          <path class="ch" d="M -18,0 L 0,-16 L 18,0" transform="translate(958,512) rotate(-30) scale(.5)"/>
+          <path class="ch" d="M -18,0 L 0,-16 L 18,0" transform="translate(1192,508) rotate(26) scale(.55)"/>
+        </g>
+
+        <!-- bord du bassin + mur : dessinés APRÈS l'eau, ils la bornent à droite -->
+        <rect x="1900" y="480" width="600" height="920" fill="#0A1626"/>
+        <rect x="1900" y="480" width="600" height="7" fill="#EAF2FF" opacity=".14"/>
+        <rect x="1896" y="487" width="4" height="913" fill="#22E0C8" opacity=".28"/>
+        <!-- carrelage discret du mur, sous l'eau -->
+        <rect x="1904" y="700" width="596" height="2" fill="#EAF2FF" opacity=".05"/>
+        <rect x="1904" y="920" width="596" height="2" fill="#EAF2FF" opacity=".05"/>
+
+        <!-- plot de départ n°4 -->
+        <g>
+          <rect x="2000" y="330" width="86" height="150" fill="#12233A"/>
+          <rect x="2000" y="330" width="3" height="150" fill="#22E0C8" opacity=".35"/>
+          <polygon points="2094,352 2124,344 2124,300 2098,308" fill="#1B3350"/>
+          <polygon points="1962,356 2124,320 2124,348 1962,384" fill="#DCE7F5"/>
+          <polygon points="1962,356 2124,320 2124,326 1962,362" fill="#FFFFFF" opacity=".55"/>
+          <text x="2043" y="446" font-family="JetBrains Mono, monospace" font-size="38" fill="#22E0C8" text-anchor="middle">4</text>
+        </g>
+      </svg>
+    </div>
+
+    <!-- LE NAGEUR : piloté indépendamment de la caméra -->
+    <div class="swimmer" id="swimmer">
+      <svg width="440" height="220" viewBox="-220 -110 440 220" aria-hidden="true" focusable="false">
+        <!-- Chaque pose est une CHAÎNE CONNECTÉE : jambes, bras et tronc sont des
+             traits épais à bouts ronds qui PARTAGENT leurs articulations, le tronc
+             est dessiné par-dessus pour masquer les jonctions, et la tête est un
+             disque qui recouvre l'épaule. Rien ne peut flotter — une tête détachée
+             au-dessus d'un ovale, ça fait un canard.
+             Le nageur est tourné vers la GAUCHE : bras en x négatif, pieds en x positif. -->
+        <g fill="none" stroke="#EAF2FF" stroke-linecap="round" stroke-linejoin="round">
+
+          <!-- pose 01 — accroupi sur le plot.
+               Posture réelle du départ : hanche haute et en arrière (50,-5),
+               genou plié vers l'avant (-10,18), pied à plat (25,62), dos plié
+               par-dessus jusqu'à l'épaule (-20,-20), bras qui tombent vers le
+               bord du plateau, tête basse devant. Le dos et la cuisse divergent
+               de 36 unités pour 33 de demi-épaisseurs : ils restent lisibles
+               séparément au lieu de fusionner en une arche. -->
+          <g id="pose-a">
+            <path d="M 50,-5 L -10,18 L 25,62" stroke-width="28"/>
+            <path d="M -20,-20 L -55,40" stroke-width="20"/>
+            <path d="M 50,-5 L -20,-20" stroke-width="38"/>
+            <circle cx="-48" cy="-2" r="19" fill="#22E0C8" stroke="none"/>
+          </g>
+
+          <!-- pose 02 — extension, le corps s'ouvre -->
+          <g id="pose-b" opacity="0">
+            <path d="M 60,-18 L 125,12 L 160,30" stroke-width="32"/>
+            <path d="M -30,-34 L -115,-52" stroke-width="26"/>
+            <path d="M 60,-18 L -30,-34" stroke-width="48"/>
+            <circle cx="-62" cy="-60" r="24" fill="#22E0C8" stroke="none"/>
+          </g>
+
+          <!-- pose 03 — flèche / coulée -->
+          <g id="pose-c" opacity="0">
+            <path d="M 65,8 L 130,14 L 180,8" stroke-width="32"/>
+            <path d="M -35,-8 L -185,-30" stroke-width="28"/>
+            <path d="M 65,8 L -35,-8" stroke-width="54"/>
+            <circle cx="-65" cy="-32" r="24" fill="#22E0C8" stroke="none"/>
+          </g>
+
+        </g>
+      </svg>
+    </div>
+
+    <!-- LE TEXTE, posé sur la ligne d'eau -->
+    <div class="hero-copy" id="heroCopy">
+      <div class="copy-rail">
+        <h1 class="title reveal" style="--i:0">Coul<span class="dot">é</span>e</h1>
+        <div class="below">
+          <p class="lede reveal" style="--i:1">
+            Les quatre nages, les records, les allures. Tout ce qui se passe
+            entre le plot et le mur.
+          </p>
+          <nav class="hero-nav" aria-label="Rubriques">
+            <a class="reveal" style="--i:2" href="nages.html"><span class="n">01</span><span class="t">Les 4 nages</span></a>
+            <a class="reveal" style="--i:3" href="comparateur.html"><span class="n">02</span><span class="t">Comparateur</span></a>
+            <a class="reveal" style="--i:4" href="allure.html"><span class="n">03</span><span class="t">Allure</span></a>
+            <a class="reveal" style="--i:5" href="disciplines.html"><span class="n">04</span><span class="t">Autres disciplines</span></a>
+          </nav>
+          <p class="hero-data reveal mono" style="--i:6">
+            50 m nage libre — record du monde <b data-rec="H.crawl" data-sep=".">20.88</b> — <span data-rec="H.crawl" data-champ="v">2,39</span> m/s
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <p class="cue mono" id="cue">↓ Défile</p>
+  </div>
+</section>
+
+<main id="contenu">
+
+  <!-- ============================================================
+       CHIFFRES CLÉS
+       ============================================================ -->
+  <section class="section" aria-label="Chiffres clés">
+    <div class="figures">
+      <div class="reveal" style="--i:0">
+        <span class="big">50<small>m</small></span>
+        <p>La longueur d'un bassin olympique, mesurée d'une plaque de touche à l'autre : 50,000 m.</p>
+      </div>
+      <div class="rec reveal" style="--i:1">
+        <span class="big"><span data-rec="H.crawl">20,88</span><small>s</small></span>
+        <p>Le record du monde du 50 m nage libre, par <span data-rec="H.crawl" data-champ="qui">Cameron McEvoy</span> (<span data-rec="H.crawl" data-champ="legende">Australie, 2026</span>).</p>
+      </div>
+      <div class="reveal" style="--i:2">
+        <span class="big">15<small>m</small></span>
+        <p>La distance maximale qu'on a le droit de nager sous l'eau après le départ et chaque virage. La brasse a sa propre règle.</p>
+      </div>
+      <div class="live reveal" style="--i:3">
+        <span class="big"><span id="live-m">0</span><small>m</small></span>
+        <p>Nagés par le recordman du 50 m depuis que tu es arrivé sur cette page, à sa vitesse moyenne de <span data-rec="H.crawl" data-champ="v">2,39</span> m/s.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ANATOMIE D'UN 50 M
+       ============================================================ -->
+  <section class="section" aria-labelledby="t-anatomie">
+    <div class="section-head">
+      <span class="label reveal" style="--i:0">01</span>
+      <h2 id="t-anatomie" class="reveal" style="--i:1">Anatomie d'un 50 m</h2>
+      <span class="label reveal" style="--i:2">Une longueur, six repères</span>
+    </div>
+
+    <div class="lane50 reveal" style="--i:0" aria-hidden="true">
+      <div class="lane50-water"><div class="lane50-bottom"></div></div>
+      <div class="mark50 is-start" style="left:0"><span>0</span></div>
+      <div class="mark50" style="left:10%"><span>5</span></div>
+      <div class="mark50" style="left:30%"><span>15</span></div>
+      <div class="mark50" style="left:50%"><span>25</span></div>
+      <div class="mark50" style="left:90%"><span>45</span></div>
+      <div class="mark50 is-end" style="right:0"><span>50</span></div>
+    </div>
+
+    <ol class="phases">
+      <li class="reveal" style="--i:0">
+        <span class="at">0 m</span>
+        <h3>Le plot</h3>
+        <p>« Take your marks », puis le signal. Partir avant, c'est la disqualification : il n'y a pas de deuxième chance.</p>
+      </li>
+      <li class="reveal" style="--i:1">
+        <span class="at">5 m</span>
+        <h3>Les fanions</h3>
+        <p>Tendus à 1,80 m au-dessus de l'eau. En dos, on ne voit pas le mur : on compte ses mouvements à partir d'eux.</p>
+      </li>
+      <li class="reveal" style="--i:2">
+        <span class="at">15 m</span>
+        <h3>Fin de la coulée</h3>
+        <p>Sauf en brasse, qui a sa propre règle, la tête doit avoir percé la surface avant ce repère. Sous l'eau, on échappe à la vague qui freine en surface.</p>
+      </li>
+      <li class="reveal" style="--i:0">
+        <span class="at">25 m</span>
+        <h3>Mi-bassin</h3>
+        <p>À la vitesse moyenne du record, le recordman y passe après <span id="half-t">10,4</span> s. Sur un 50 m, il n'y a pas de virage.</p>
+      </li>
+      <li class="reveal" style="--i:1">
+        <span class="at">45 m</span>
+        <h3>Flotteurs rouges</h3>
+        <p>Les 5 derniers mètres de chaque corde sont rouges : c'est le signal que le mur arrive.</p>
+      </li>
+      <li class="reveal" style="--i:2">
+        <span class="at">50 m</span>
+        <h3>La plaque</h3>
+        <p>Le chrono s'arrête au contact de la plaque de touche, au centième de seconde. Deux nageurs peuvent finir ex æquo.</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ============================================================
+       LE BASSIN
+       ============================================================ -->
+  <section class="section" aria-labelledby="t-bassin">
+    <div class="section-head">
+      <span class="label reveal" style="--i:0">02</span>
+      <h2 id="t-bassin" class="reveal" style="--i:1">Le bassin olympique</h2>
+      <span class="label reveal" style="--i:2">Règlement World Aquatics</span>
+    </div>
+    <div class="pool">
+      <figure class="reveal" style="--i:0">
+        <svg viewBox="-40 -46 580 344" role="img" aria-labelledby="pool-title">
+          <title id="pool-title">Plan d'un bassin olympique vu du dessus : 50 mètres sur 25, dix couloirs numérotés de 0 à 9, cordes aux 5 derniers mètres rouges, lignes de fond arrêtées à 2 mètres du mur par un T, fanions de dos à 5 mètres et repères à 15 mètres.</title>
+          <defs><linearGradient id="pool-water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0B2B4F"/><stop offset="1" stop-color="#071A31"/></linearGradient></defs>
+          <rect x="-8" y="-8" width="516" height="266" fill="none" stroke="rgba(34,224,200,.35)" stroke-width="1"/>
+          <rect x="0" y="0" width="500" height="250" fill="url(#pool-water)"/>
+          <g stroke="#04101D" stroke-width="2.5">
+            <line x1="20" y1="12.5" x2="480" y2="12.5"/><line x1="20" y1="7.5" x2="20" y2="17.5"/><line x1="480" y1="7.5" x2="480" y2="17.5"/>
+            <line x1="20" y1="37.5" x2="480" y2="37.5"/><line x1="20" y1="32.5" x2="20" y2="42.5"/><line x1="480" y1="32.5" x2="480" y2="42.5"/>
+            <line x1="20" y1="62.5" x2="480" y2="62.5"/><line x1="20" y1="57.5" x2="20" y2="67.5"/><line x1="480" y1="57.5" x2="480" y2="67.5"/>
+            <line x1="20" y1="87.5" x2="480" y2="87.5"/><line x1="20" y1="82.5" x2="20" y2="92.5"/><line x1="480" y1="82.5" x2="480" y2="92.5"/>
+            <line x1="20" y1="112.5" x2="480" y2="112.5"/><line x1="20" y1="107.5" x2="20" y2="117.5"/><line x1="480" y1="107.5" x2="480" y2="117.5"/>
+            <line x1="20" y1="137.5" x2="480" y2="137.5"/><line x1="20" y1="132.5" x2="20" y2="142.5"/><line x1="480" y1="132.5" x2="480" y2="142.5"/>
+            <line x1="20" y1="162.5" x2="480" y2="162.5"/><line x1="20" y1="157.5" x2="20" y2="167.5"/><line x1="480" y1="157.5" x2="480" y2="167.5"/>
+            <line x1="20" y1="187.5" x2="480" y2="187.5"/><line x1="20" y1="182.5" x2="20" y2="192.5"/><line x1="480" y1="182.5" x2="480" y2="192.5"/>
+            <line x1="20" y1="212.5" x2="480" y2="212.5"/><line x1="20" y1="207.5" x2="20" y2="217.5"/><line x1="480" y1="207.5" x2="480" y2="217.5"/>
+            <line x1="20" y1="237.5" x2="480" y2="237.5"/><line x1="20" y1="232.5" x2="20" y2="242.5"/><line x1="480" y1="232.5" x2="480" y2="242.5"/>
+          </g>
+          <g stroke-width="3" stroke-dasharray="2 3">
+            <line x1="50" y1="25" x2="450" y2="25" stroke="#EAF2FF" opacity=".75"/><line x1="0" y1="25" x2="50" y2="25" stroke="#FF5A3C"/><line x1="450" y1="25" x2="500" y2="25" stroke="#FF5A3C"/>
+            <line x1="50" y1="50" x2="450" y2="50" stroke="#EAF2FF" opacity=".75"/><line x1="0" y1="50" x2="50" y2="50" stroke="#FF5A3C"/><line x1="450" y1="50" x2="500" y2="50" stroke="#FF5A3C"/>
+            <line x1="50" y1="75" x2="450" y2="75" stroke="#EAF2FF" opacity=".75"/><line x1="0" y1="75" x2="50" y2="75" stroke="#FF5A3C"/><line x1="450" y1="75" x2="500" y2="75" stroke="#FF5A3C"/>
+            <line x1="50" y1="100" x2="450" y2="100" stroke="#EAF2FF" opacity=".75"/><line x1="0" y1="100" x2="50" y2="100" stroke="#FF5A3C"/><line x1="450" y1="100" x2="500" y2="100" stroke="#FF5A3C"/>
+            <line x1="50" y1="125" x2="450" y2="125" stroke="#EAF2FF" opacity=".75"/><line x1="0" y1="125" x2="50" y2="125" stroke="#FF5A3C"/><line x1="450" y1="125" x2="500" y2="125" stroke="#FF5A3C"/>
+            <line x1="50" y1="150" x2="450" y2="150" stroke="#EAF2FF" opacity=".75"/><line x1="0" y1="150" x2="50" y2="150" stroke="#FF5A3C"/><line x1="450" y1="150" x2="500" y2="150" stroke="#FF5A3C"/>
+            <line x1="50" y1="175" x2="450" y2="175" stroke="#EAF2FF" opacity=".75"/><line x1="0" y1="175" x2="50" y2="175" stroke="#FF5A3C"/><line x1="450" y1="175" x2="500" y2="175" stroke="#FF5A3C"/>
+            <line x1="50" y1="200" x2="450" y2="200" stroke="#EAF2FF" opacity=".75"/><line x1="0" y1="200" x2="50" y2="200" stroke="#FF5A3C"/><line x1="450" y1="200" x2="500" y2="200" stroke="#FF5A3C"/>
+            <line x1="50" y1="225" x2="450" y2="225" stroke="#EAF2FF" opacity=".75"/><line x1="0" y1="225" x2="50" y2="225" stroke="#FF5A3C"/><line x1="450" y1="225" x2="500" y2="225" stroke="#FF5A3C"/>
+          </g>
+          <g stroke="#22E0C8" stroke-width="1" stroke-dasharray="4 4" opacity=".7">
+            <line x1="50" y1="-8" x2="50" y2="258"/><line x1="450" y1="-8" x2="450" y2="258"/>
+          </g>
+          <g fill="#22E0C8">
+            <path d="M 146,-8 l 4,-7 l 4,7 z"/><path d="M 346,-8 l 4,-7 l 4,7 z"/><path d="M 146,258 l 4,7 l 4,-7 z"/><path d="M 346,258 l 4,7 l 4,-7 z"/>
+          </g>
+          <g font-family="Anton, Impact, sans-serif" font-size="14" fill="#EAF2FF">
+            <text x="5" y="18">0</text>
+            <text x="5" y="43">1</text>
+            <text x="5" y="68">2</text>
+            <text x="5" y="93">3</text>
+            <text x="5" y="118">4</text>
+            <text x="5" y="143">5</text>
+            <text x="5" y="168">6</text>
+            <text x="5" y="193">7</text>
+            <text x="5" y="218">8</text>
+            <text x="5" y="243">9</text>
+          </g>
+          <g stroke="#8FA6BF" stroke-width="1">
+            <line x1="0" y1="-30" x2="500" y2="-30"/><line x1="0" y1="-36" x2="0" y2="-24"/><line x1="500" y1="-36" x2="500" y2="-24"/>
+            <line x1="-26" y1="0" x2="-26" y2="250"/><line x1="-32" y1="0" x2="-20" y2="0"/><line x1="-32" y1="250" x2="-20" y2="250"/>
+          </g>
+          <g font-family="JetBrains Mono, Consolas, monospace" font-size="11" fill="#8FA6BF">
+            <rect x="228" y="-38" width="44" height="16" fill="#060E1A"/><text x="250" y="-26" text-anchor="middle">50 m</text>
+            <text x="-30" y="125" text-anchor="middle" transform="rotate(-90 -30 125)" style="paint-order:stroke;stroke:#060E1A;stroke-width:6px">25 m</text>
+            <text x="50" y="284" text-anchor="middle" fill="#22E0C8">5 m</text><text x="150" y="284" text-anchor="middle" fill="#22E0C8">15 m</text>
+            <text x="350" y="284" text-anchor="middle" fill="#22E0C8">15 m</text><text x="450" y="284" text-anchor="middle" fill="#22E0C8">5 m</text>
+          </g>
+        </svg>
+        <figcaption class="label">Vu du dessus, à l'échelle : 50 × 25 m</figcaption>
+      </figure>
+      <dl class="facts reveal" style="--i:1">
+        <div><dt>Dimensions</dt><dd>50 × 25 m</dd></div>
+        <div><dt>Couloirs</dt><dd>10 × 2,5 m</dd></div>
+        <div><dt>Profondeur</dt><dd>2,5 m minimum</dd></div>
+        <div><dt>Eau</dt><dd>25 à 28 °C</dd></div>
+        <div><dt>Lignes de fond</dt><dd>Arrêtées à 2 m du mur par un T</dd></div>
+        <div><dt>Cordes</dt><dd>Rouges sur les 5 derniers mètres</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       POURQUOI NAGER
+       ============================================================ -->
+  <section class="section" aria-labelledby="t-pourquoi">
+    <div class="section-head">
+      <span class="label reveal" style="--i:0">03</span>
+      <h2 id="t-pourquoi" class="reveal" style="--i:1">Pourquoi nager</h2>
+    </div>
+    <div class="duo">
+      <div class="reveal" style="--i:0">
+        <h3>Pour le corps</h3>
+        <p>Bras, jambes, dos et abdominaux travaillent en même temps. L'eau porte le poids du corps : on se muscle en profondeur sans choc pour les articulations. Pratiquée régulièrement, la natation améliore la capacité respiratoire et la circulation sanguine.</p>
+      </div>
+      <div class="reveal" style="--i:1">
+        <h3>Pour la tête</h3>
+        <p>Une longueur, c'est un mouvement répété et une respiration imposée par le rythme des bras. C'est ce qui aide à décrocher du stress et à mieux dormir. Et chaque seconde gagnée sur un 100 m se mesure, ce qui rend la progression concrète.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SOMMAIRE
+       ============================================================ -->
+  <section class="section" aria-labelledby="t-sommaire">
+    <div class="section-head">
+      <span class="label reveal" style="--i:0">04</span>
+      <h2 id="t-sommaire" class="reveal" style="--i:1">Dans le bassin</h2>
+    </div>
+    <nav class="strokes" aria-labelledby="t-sommaire">
+      <a class="stroke reveal" style="--i:0" href="nages.html">
+        <span class="n">01</span>
+        <span>
+          <span class="name">Les 4 nages</span>
+          <span class="desc">Papillon, dos, brasse, nage libre : comment chacune se nage, dans l'ordre du 4 nages individuel.</span>
+        </span>
+        <span class="v"><span data-rec="H.brasse" data-champ="v">1,93</span> → <span data-rec="H.crawl" data-champ="v">2,39</span> m/s<small>de la plus lente à la plus rapide</small></span>
+      </a>
+      <a class="stroke reveal" style="--i:1" href="comparateur.html">
+        <span class="n">02</span>
+        <span>
+          <span class="name">Comparateur</span>
+          <span class="desc">Les quatre records du monde du 50 m lancés dans la même piscine, au même instant. Et ce que chaque nage brûle en une heure.</span>
+        </span>
+        <span class="v"><span data-rec="H.crawl" data-sep=".">20.88</span> s<small>record du 50 m</small></span>
+      </a>
+      <a class="stroke reveal" style="--i:2" href="allure.html">
+        <span class="n">03</span>
+        <span>
+          <span class="name">Calculateur d'allure</span>
+          <span class="desc">Un temps sur 100 m suffit pour estimer ton 400 ou ton 1500, avec les passages à viser.</span>
+        </span>
+        <span class="v">T₂ = T₁ × (D₂/D₁)<sup>1,06</sup><small>formule de Riegel</small></span>
+      </a>
+      <a class="stroke reveal" style="--i:3" href="disciplines.html">
+        <span class="n">04</span>
+        <span>
+          <span class="name">Autres disciplines</span>
+          <span class="desc">Eau libre, water-polo, plongeon, natation artistique : tout ce qui se nage sans ligne d'eau.</span>
+        </span>
+        <span class="v">10 km<small>distance olympique en eau libre</small></span>
+      </a>
+    </nav>
+  </section>
+
+</main>
+
+<footer>
+  <span>Coulée — Pierre Dunand-Chatellet — <span class="mono">2026</span></span>
+  <button class="link-btn end" type="button" id="replay">↺ Rejouer le plongeon</button>
+</footer>
+
+<script src="js/donnees.js?v=20260916-3"></script>
+<script src="js/site.js?v=20260916-3"></script>
+<script src="js/intro.js?v=20260916-3"></script>
+<script src="js/accueil.js?v=20260916-3"></script>
+</body>
+</html>

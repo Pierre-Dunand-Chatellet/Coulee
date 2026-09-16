@@ -1,0 +1,583 @@
+/* ============================================================
+   COULÉE — feuille commune
+   Identité « immersif nuit » : bleu nuit, cyan des flotteurs, orange
+   réservé aux records. Angles droits, filets fins, chiffres en mono.
+   ============================================================ */
+:root{
+  --night:#060E1A;
+  --water-1:#0B2B4F;
+  --water-2:#071A31;
+  --ink:#EAF2FF;
+  --muted:#8FA6BF;
+  --cyan:#22E0C8;
+  --orange:#FF5A3C;
+  --hair:rgba(34,224,200,.18);
+  --hair-soft:rgba(234,242,255,.10);
+
+  --f-display:"Anton","Arial Narrow",Impact,sans-serif;
+  --f-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+
+  --ease-out:cubic-bezier(.23,1,.32,1);
+  --dur-text:260ms;
+  --gutter:clamp(20px,5vw,72px);
+  --wrap:1320px;
+  /* hauteur de la barre fixe : imposée (min-height) et non plus devinée, pour que
+     le haut des pages ne passe jamais dessous */
+  --bar-h:64px;
+  --bar:calc(var(--bar-h) + env(safe-area-inset-top,0px));
+  /* repli en vh : dans une variable, une unité inconnue (svh avant 2022) ne
+     retombe pas sur la déclaration précédente, elle rend height invalide → la
+     scène mesurait 0 et le plongeon ne se jouait jamais */
+  --track:400vh;
+
+  /* corde de couloir : les mêmes flotteurs que dans l'animation */
+  --floats:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='68' height='26'%3E%3Cellipse cx='17' cy='13' rx='15' ry='11' fill='%23EAF2FF'/%3E%3Cellipse cx='51' cy='13' rx='15' ry='11' fill='%2322E0C8'/%3E%3C/svg%3E");
+}
+@supports (height:100svh){ :root{--track:400svh} }
+*{box-sizing:border-box}
+/* L'attribut hidden doit gagner contre tout display posé par une classe :
+   sans ça, .btn{display:inline-flex} affichait le bouton « Lire l'animation » en permanence. */
+[hidden]{display:none !important}
+html{
+  background:var(--night);
+  color-scheme:dark;
+  -webkit-text-size-adjust:100%;
+  scroll-padding-top:calc(var(--bar) + 16px);
+}
+@media (prefers-reduced-motion: no-preference){ html{scroll-behavior:smooth} }
+body{
+  margin:0;
+  background:var(--night);
+  color:var(--ink);
+  font-family:var(--f-body);
+  font-size:1rem;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;text-transform:uppercase;line-height:.84;letter-spacing:-.02em;margin:0}
+p{margin:0}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:4px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.label{
+  font-family:var(--f-mono);font-size:.6875rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--cyan);
+}
+.muted{color:var(--muted)}
+
+.skip{
+  position:absolute;left:var(--gutter);top:-100px;z-index:50;
+  background:var(--cyan);color:var(--night);
+  font-family:var(--f-mono);font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;
+  padding:12px 16px;text-decoration:none;
+}
+.skip:focus{top:calc(8px + env(safe-area-inset-top,0px))}
+
+.rope{height:13px;background:var(--floats) 0 0/34px 13px repeat-x}
+
+/* ---------- révélations (une seule fois, jamais rejouées) ---------- */
+.js .reveal{
+  opacity:0;transform:translateY(12px);
+  transition:opacity var(--dur-text) var(--ease-out),transform var(--dur-text) var(--ease-out);
+  transition-delay:calc(var(--i,0) * 60ms);
+}
+.js .is-in .reveal,.js .reveal.is-in{opacity:1;transform:none}
+
+/* ============================================================
+   BARRE DE NAVIGATION
+   Pages intérieures : toujours visible (.is-on dans le HTML).
+   Accueil : apparaît une fois le plongeon joué et le hero quitté.
+   ============================================================ */
+.mini{
+  position:fixed;top:0;left:0;right:0;z-index:20;
+  display:flex;align-items:center;gap:16px;
+  min-height:var(--bar);
+  padding:0 var(--gutter);
+  padding-top:env(safe-area-inset-top,0px);
+  background:rgba(6,14,26,.82);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--hair);
+  opacity:0;transform:translateY(-100%);pointer-events:none;
+  transition:opacity 200ms var(--ease-out),transform 240ms var(--ease-out);
+}
+/* au clavier, une barre invisible ne doit pas recevoir le focus en aveugle */
+.mini.is-on,.mini:focus-within{opacity:1;transform:none;pointer-events:auto}
+.mini .mark{font-family:var(--f-display);font-size:1.125rem;text-transform:uppercase;letter-spacing:.02em;text-decoration:none;white-space:nowrap}
+.mini .mark i{color:var(--cyan);font-style:normal}
+.mini nav{margin-left:auto;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.mini nav::-webkit-scrollbar{display:none}
+.mini nav a{
+  font-family:var(--f-mono);font-size:.6875rem;letter-spacing:.1em;text-transform:uppercase;
+  text-decoration:none;color:var(--muted);padding:8px 10px;white-space:nowrap;
+  border-bottom:1px solid transparent;
+  transition:color 160ms var(--ease-out),border-color 160ms var(--ease-out);
+}
+.mini nav a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--cyan)}
+/* overflow-x:auto sur le nav coupe aussi ce qui dépasse en hauteur : le contour
+   de focus (décalé de 4 px) était rogné. On le rentre dans le lien. */
+.mini nav a:focus-visible{outline-offset:-2px}
+@media (hover:hover) and (pointer:fine){ .mini nav a:hover{color:var(--ink)} }
+
+/* ============================================================
+   LA SCÈNE (accueil uniquement)
+   ============================================================ */
+.scene{position:relative;height:400vh;height:var(--track)}
+/* Séquence jouée : la piste de scroll disparaît, le hero devient un hero normal
+   et le haut de page est l'image finale. On ne peut plus rejouer le plongeon. */
+.scene.is-done{height:100vh;height:100svh}
+.stage{
+  position:sticky;top:0;
+  height:100vh;height:100svh;
+  overflow:hidden;
+  background:var(--night);
+  isolation:isolate;
+}
+.world,.swimmer{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
+.scene.is-settled .world,.scene.is-settled .swimmer{will-change:auto}
+.scene-svg{position:absolute;left:-200px;top:-400px;display:block}
+.swimmer svg{position:absolute;left:-220px;top:-110px;display:block;overflow:visible}
+
+.cue{
+  position:absolute;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));
+  transform:translateX(-50%);
+  font-family:var(--f-mono);font-size:.6875rem;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--muted);
+  transition:opacity 220ms var(--ease-out);
+}
+.cue.is-off{opacity:0}
+
+.hero-copy{position:absolute;inset:0;pointer-events:none}
+/* Tant que le texte n'est pas révélé, ses LIENS sont invisibles : ils ne doivent
+   ni se cliquer au milieu du plongeon, ni recevoir le focus clavier. Seulement
+   les liens : visibility:hidden sur tout le bloc retirait aussi le h1 et le
+   paragraphe de l'arbre d'accessibilité — la page n'avait plus de titre pour un
+   lecteur d'écran. Eux restent en simple opacity:0 (.reveal). */
+.js .hero-copy:not(.is-in) .hero-nav{visibility:hidden}
+.copy-rail{
+  position:absolute;top:58%;left:var(--gutter);right:var(--gutter);
+  max-width:1180px;
+}
+.title{
+  /* bottom:100% = le bas du titre sur le HAUT du rail, c'est-à-dire sur la ligne d'eau */
+  position:absolute;bottom:100%;left:-.04em;margin:0 0 -.03em;
+  font-size:clamp(3.25rem,11.5vw,11rem);
+  line-height:.78;letter-spacing:-.03em;
+}
+.title .dot{color:var(--cyan)}
+.below{padding-top:26px;display:flex;flex-direction:column;gap:22px}
+.lede{font-size:clamp(1rem,1.5vw,1.1875rem);max-width:46ch;color:var(--ink);pointer-events:auto}
+.hero-nav{display:flex;flex-wrap:wrap;pointer-events:auto}
+.hero-nav a{
+  display:flex;align-items:baseline;gap:10px;
+  padding:10px 22px 10px 0;margin-right:22px;
+  text-decoration:none;
+  border-bottom:1px solid transparent;
+}
+.hero-nav .n{font-family:var(--f-mono);font-size:.6875rem;color:var(--cyan);letter-spacing:.1em}
+.hero-nav .t{font-family:var(--f-display);font-size:clamp(1.0625rem,1.7vw,1.5rem);text-transform:uppercase;letter-spacing:-.01em}
+@media (hover:hover) and (pointer:fine){
+  .hero-nav a{transition:border-color 160ms var(--ease-out)}
+  .hero-nav a:hover{border-bottom-color:var(--cyan)}
+}
+.hero-data{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+.hero-data b{color:var(--ink);font-weight:500}
+
+/* ============================================================
+   MISE EN PAGE DES PAGES
+   ============================================================ */
+.page{padding-top:var(--bar)}
+.page-head{padding:clamp(56px,11vh,128px) var(--gutter) clamp(36px,6vh,64px);max-width:var(--wrap);margin-inline:auto}
+.page-head h1{font-size:clamp(3.5rem,13vw,10rem);line-height:.8;letter-spacing:-.03em;margin:20px 0 28px}
+.page-head h1 .dot{color:var(--cyan)}
+.page-head .intro{font-size:clamp(1rem,1.5vw,1.1875rem);max-width:58ch;color:var(--muted)}
+
+.section{padding:clamp(56px,10vh,128px) var(--gutter);max-width:var(--wrap);margin-inline:auto}
+.section + .section{padding-top:0}
+.section-head{display:flex;align-items:baseline;gap:20px;flex-wrap:wrap;margin-bottom:clamp(28px,5vh,56px)}
+.section-head h2{font-size:clamp(2rem,5.2vw,4.25rem)}
+.section-head .label:last-child:not(:first-child){margin-left:auto}
+
+/* ---------- boutons ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--f-mono);font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--night);background:var(--cyan);border:0;border-radius:0;
+  padding:13px 20px;cursor:pointer;text-decoration:none;
+  transition:transform 160ms var(--ease-out),background-color 160ms var(--ease-out);
+}
+.btn:active{transform:scale(.97)}
+@media (hover:hover) and (pointer:fine){ .btn:hover{background-color:#5CEBD8} }
+.link-btn{
+  font:inherit;color:var(--cyan);background:none;border:0;padding:0;cursor:pointer;
+  text-transform:inherit;letter-spacing:inherit;
+}
+
+/* ---------- liste de lignes (accueil, index des pages) ---------- */
+.strokes{border-top:1px solid var(--hair)}
+.stroke{
+  display:grid;grid-template-columns:auto 1fr auto;align-items:center;
+  gap:clamp(16px,3vw,40px);
+  padding:clamp(20px,3.4vh,34px) 12px;
+  border-bottom:1px solid var(--hair);
+  text-decoration:none;
+}
+.stroke .n{font-family:var(--f-mono);font-size:.75rem;color:var(--cyan);letter-spacing:.1em}
+.stroke .name{font-family:var(--f-display);font-size:clamp(1.75rem,4.6vw,3.25rem);text-transform:uppercase;line-height:.9;letter-spacing:-.02em;display:block}
+.stroke .desc{color:var(--muted);font-size:.9375rem;max-width:52ch;margin-top:6px;display:block}
+.stroke .v{font-family:var(--f-mono);font-size:clamp(.8125rem,1.6vw,1.0625rem);color:var(--ink);white-space:nowrap;text-align:right}
+/* white-space:normal : hérité de .v, le nowrap faisait déborder la légende sous ~350 px */
+.stroke .v small{display:block;white-space:normal;color:var(--muted);font-size:.6875rem;letter-spacing:.1em;text-transform:uppercase;margin-top:4px}
+@media (hover:hover) and (pointer:fine){
+  .stroke{transition:background-color 160ms var(--ease-out)}
+  .stroke .name{transition:transform 200ms var(--ease-out)}
+  a.stroke:hover{background-color:rgba(34,224,200,.05)}
+  a.stroke:hover .name{transform:translateX(8px)}
+}
+
+/* ---------- accueil : chiffres clés ---------- */
+.figures{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--hair);border:1px solid var(--hair)}
+.figures > div{background:var(--night);padding:clamp(22px,4vh,36px) clamp(18px,2.4vw,30px);display:flex;flex-direction:column;gap:12px}
+.figures .big{font-family:var(--f-display);font-size:clamp(2.75rem,5.4vw,4.75rem);line-height:.85;letter-spacing:-.01em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.figures .big small{font-size:.45em;letter-spacing:0;margin-left:.15em;color:var(--muted)}
+.figures .rec .big{color:var(--orange)}
+.figures .live .big{color:var(--cyan)}
+/* 70 % de la taille normale ; en rem et pas en em : em se rapporterait au parent (16 px) */
+.figures .big.is-long{font-size:clamp(1.75rem,3.8vw,3.3rem)}
+.figures p{font-size:.875rem;color:var(--muted);max-width:30ch}
+
+/* ---------- accueil : anatomie d'un 50 m ---------- */
+/* marge basse fixe : les étiquettes des repères descendent à 34 px sous l'eau */
+.lane50{position:relative;margin:clamp(36px,6vh,56px) 0 56px}
+.lane50-water{
+  position:relative;height:clamp(64px,10vh,96px);
+  background:linear-gradient(180deg,var(--water-1),var(--water-2));
+  border:1px solid var(--hair);
+}
+/* corde : flotteurs normaux, rouges sur les 5 premiers et 5 derniers mètres (10 % de 50 m) */
+.lane50-water::before{
+  content:"";position:absolute;left:0;right:0;top:-7px;height:13px;
+  background:var(--floats) 0 0/34px 13px repeat-x;
+}
+.lane50-water::after{
+  content:"";position:absolute;top:-7px;height:13px;left:0;right:0;
+  background:
+    linear-gradient(90deg,var(--orange) 0 10%,transparent 10% 90%,var(--orange) 90%);
+  -webkit-mask:var(--floats) 0 0/34px 13px repeat-x;mask:var(--floats) 0 0/34px 13px repeat-x;
+}
+/* ligne de fond : s'arrête à 2 m de chaque mur (4 %), barre en T */
+.lane50-bottom{position:absolute;left:4%;right:4%;top:50%;height:4px;margin-top:-2px;background:#04101D}
+.lane50-bottom::before,.lane50-bottom::after{content:"";position:absolute;top:-10px;width:4px;height:24px;background:#04101D}
+.lane50-bottom::before{left:0}
+.lane50-bottom::after{right:0}
+.mark50{position:absolute;top:-18px;bottom:-34px;width:0;border-left:1px dashed var(--cyan)}
+.mark50 span{
+  position:absolute;bottom:0;left:0;transform:translateX(-50%);
+  font-family:var(--f-mono);font-size:.6875rem;color:var(--cyan);white-space:nowrap;
+}
+.mark50.is-start span{transform:none}
+.mark50.is-end{border-left:0;border-right:1px dashed var(--cyan)}
+.mark50.is-end span{left:auto;right:0;transform:none}
+.phases{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--hair);border:1px solid var(--hair)}
+.phases li{background:var(--night);padding:clamp(20px,3.4vh,30px) clamp(18px,2.2vw,28px);display:flex;flex-direction:column;gap:10px}
+.phases .at{font-family:var(--f-mono);font-size:.75rem;color:var(--cyan);letter-spacing:.08em}
+.phases h3{font-size:clamp(1.5rem,2.6vw,2rem);line-height:.9}
+.phases p{font-size:.9375rem;color:var(--muted)}
+
+/* ---------- accueil : le bassin ---------- */
+.pool{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(28px,5vw,64px);align-items:center}
+.pool figure{margin:0}
+.pool svg{display:block;width:100%;height:auto}
+.pool figcaption{margin-top:12px}
+.pool .facts{grid-template-columns:1fr 1fr}
+
+/* ---------- deux colonnes de texte ---------- */
+.duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid var(--hair)}
+.duo > div{padding:clamp(28px,5vh,48px) clamp(20px,3vw,40px) 0 0;display:flex;flex-direction:column;gap:16px}
+.duo > div + div{padding-left:clamp(20px,3vw,40px);padding-right:0;border-left:1px solid var(--hair)}
+.duo h3{font-size:clamp(2rem,4vw,3rem)}
+.duo p{max-width:56ch;color:var(--muted)}
+
+/* ---------- les 4 nages ---------- */
+.nage{
+  display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);
+  gap:clamp(24px,5vw,72px);
+  padding:clamp(40px,7vh,80px) 0;
+  border-top:1px solid var(--hair);
+}
+.nage-id .num{
+  display:block;font-family:var(--f-display);font-size:clamp(5rem,12vw,9.5rem);line-height:.8;
+  color:transparent;-webkit-text-stroke:1px var(--cyan);
+}
+.nage-id h2{font-size:clamp(2.5rem,6vw,4.75rem);margin-top:14px}
+.nage-body{display:flex;flex-direction:column;gap:28px}
+.nage-body > p{font-size:1.0625rem;max-width:60ch}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--hair);border:1px solid var(--hair);margin:0}
+.facts div{background:var(--night);padding:14px 16px}
+.facts dt{font-family:var(--f-mono);font-size:.6875rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.facts dd{margin:4px 0 0;font-weight:500}
+.facts .rec dd{font-family:var(--f-mono);color:var(--orange)}
+.rhythm{display:flex;flex-direction:column;gap:10px}
+.rhythm svg{width:100%;max-width:440px;height:auto;display:block}
+.rh-block{fill:var(--cyan)}
+.rh-track{stroke:var(--hair)}
+.rh-text{fill:var(--muted);font-family:var(--f-mono);font-size:10px}
+
+/* ---------- comparateur : la course ---------- */
+.controls{display:flex;flex-wrap:wrap;gap:18px 28px;align-items:end;margin-bottom:28px}
+fieldset{border:0;padding:0;margin:0;min-width:0}
+legend{padding:0;margin-bottom:8px}
+.seg{position:relative;display:inline-flex;border:1px solid var(--hair)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{
+  font-family:var(--f-mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;
+  padding:11px 16px;cursor:pointer;color:var(--muted);
+  transition:background-color 160ms var(--ease-out),color 160ms var(--ease-out);
+}
+.seg input:checked + label{background:var(--cyan);color:var(--night)}
+.seg input:focus-visible + label{outline:2px solid var(--cyan);outline-offset:3px}
+
+.race{border:1px solid var(--hair);background:linear-gradient(180deg,var(--water-1),var(--water-2))}
+.lane{display:grid;grid-template-columns:150px minmax(0,1fr) 104px;align-items:center;min-height:76px}
+.lane-name{padding-inline:16px;display:flex;flex-direction:column;line-height:1.1}
+.lane-name small{font-family:var(--f-mono);font-size:.625rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.lane-name b{font-family:var(--f-display);font-weight:400;font-size:1.5rem;text-transform:uppercase;margin-top:4px}
+.track{position:relative;height:76px}
+/* ligne de fond du couloir, et mur d'arrivée */
+.track::before{content:"";position:absolute;left:0;right:0;top:50%;height:4px;margin-top:-2px;background:#04101D;opacity:.9}
+.track::after{content:"";position:absolute;right:0;top:0;bottom:0;width:2px;background:var(--cyan);opacity:.45}
+.race-swimmer{position:absolute;left:0;top:50%;width:72px;height:22px;margin-top:-11px;will-change:transform}
+.race-swimmer svg{display:block;width:100%;height:100%;overflow:visible}
+.lane-time{
+  font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right;
+  padding-inline:16px;border-left:1px solid var(--hair);
+  align-self:stretch;display:flex;flex-direction:column;justify-content:center;
+}
+.lane-time .chrono{font-size:1.0625rem}
+.lane.done .chrono{color:var(--orange)}
+.lane-time .place{font-size:.625rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);min-height:1.2em}
+
+.table-wrap{overflow-x:auto;margin-top:clamp(32px,5vh,48px)}
+table{border-collapse:collapse;width:100%;min-width:620px}
+th,td{text-align:left;padding:14px 16px 14px 0;border-bottom:1px solid var(--hair-soft)}
+thead th{font-family:var(--f-mono);font-size:.6875rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:400;border-bottom-color:var(--hair)}
+th.num,td.num{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+td b{font-family:var(--f-display);font-weight:400;text-transform:uppercase;font-size:1.375rem;letter-spacing:.01em}
+td.rec{color:var(--orange)}
+
+.energy-head{display:flex;flex-wrap:wrap;gap:20px 40px;align-items:end;justify-content:space-between;margin-bottom:28px}
+.energy-head h2{font-size:clamp(2rem,5vw,3.5rem)}
+.kcal{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--hair);border:1px solid var(--hair)}
+.kcal div{background:var(--night);padding:22px}
+.kcal .big{display:block;font-family:var(--f-display);font-size:clamp(2.75rem,5vw,4rem);line-height:.9;font-variant-numeric:tabular-nums;margin:12px 0 6px}
+.kcal .top .big{color:var(--orange)}
+.kcal .unit{font-family:var(--f-mono);font-size:.6875rem;color:var(--muted);letter-spacing:.06em}
+
+.note{margin-top:20px;font-size:.8125rem;color:var(--muted);max-width:72ch}
+
+/* ---------- champs ---------- */
+/* l'espacement est porté par le conteneur, pas par le champ : un champ isolé
+   (le poids, à côté d'un titre) ne doit pas traîner une marge qui le décale */
+.field{display:flex;flex-direction:column;gap:8px}
+form > * + *{margin-top:20px}
+.field label{font-family:var(--f-mono);font-size:.6875rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.field input,.field select{
+  font-family:var(--f-mono);font-size:1.0625rem;color:var(--ink);
+  background:transparent;border:1px solid var(--hair);border-radius:0;
+  padding:13px 14px;width:100%;
+  transition:border-color 160ms var(--ease-out);
+}
+/* 1 px qui change de couleur ne se voit pas : on double le trait au focus */
+.field input:focus,.field select:focus{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan);outline:none}
+.field input[aria-invalid="true"]{border-color:var(--orange)}
+.field select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--cyan) 50%),linear-gradient(135deg,var(--cyan) 50%,transparent 50%);background-position:calc(100% - 20px) 22px,calc(100% - 14px) 22px;background-size:6px 6px;background-repeat:no-repeat;padding-right:40px}
+.field select option{background:var(--water-2);color:var(--ink)}
+.field .hint{font-size:.75rem;color:var(--muted)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* ---------- allure ---------- */
+.pace{display:grid;grid-template-columns:minmax(280px,1fr) minmax(280px,1.1fr);gap:clamp(24px,5vw,64px);align-items:start}
+.out{border:1px solid var(--hair);padding:clamp(22px,4vh,34px);background:linear-gradient(180deg,rgba(11,43,79,.55),rgba(7,26,49,.2))}
+.out .big{font-family:var(--f-mono);font-weight:500;font-size:clamp(2.75rem,8vw,5rem);line-height:1;letter-spacing:-.04em;color:var(--cyan);margin:12px 0 0;display:block}
+.stats{display:flex;flex-wrap:wrap;gap:18px 36px;margin-top:24px;padding-top:20px;border-top:1px solid var(--hair)}
+.stats div{display:flex;flex-direction:column;gap:4px}
+.stats output{font-family:var(--f-mono);font-size:1.1875rem;font-variant-numeric:tabular-nums}
+.splits-head{margin:28px 0 10px}
+.splits{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:1px;background:var(--hair);border:1px solid var(--hair)}
+.splits div{background:var(--night);padding:10px 12px;display:flex;flex-direction:column}
+.splits .d{font-family:var(--f-mono);font-size:.6875rem;color:var(--muted)}
+.splits .t{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.splits div:last-child{background:var(--cyan);color:var(--night)}
+.splits div:last-child .d{color:var(--night);opacity:.7}
+.formula{margin-top:20px;font-family:var(--f-mono);font-size:.6875rem;color:var(--muted);letter-spacing:.04em;line-height:1.7}
+
+/* ---------- autres disciplines ---------- */
+.disc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid var(--hair)}
+.disc article{padding:clamp(32px,6vh,60px) clamp(20px,3vw,44px) clamp(32px,6vh,60px) 0;border-bottom:1px solid var(--hair);display:flex;flex-direction:column;gap:18px}
+.disc article:nth-child(even){padding-left:clamp(20px,3vw,44px);padding-right:0;border-left:1px solid var(--hair)}
+.fig{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+.fig strong{font-family:var(--f-display);font-weight:400;font-size:clamp(4.5rem,10vw,7.5rem);line-height:.8;color:var(--cyan);font-variant-numeric:tabular-nums}
+.fig span{font-family:var(--f-mono);font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);max-width:24ch;line-height:1.6}
+.disc h3{font-size:clamp(2rem,4vw,3rem)}
+.disc p{max-width:56ch}
+.disc .calc{font-family:var(--f-mono);font-size:.75rem;color:var(--muted)}
+
+/* ---------- utilitaires ---------- */
+/* lu par les lecteurs d'écran, invisible à l'écran */
+.visually-hidden{position:absolute !important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* ---------- allure : toi contre le record ---------- */
+.vs-vitesse{margin-top:0;align-self:center}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.vs-texte{margin-top:24px;font-size:clamp(1rem,1.6vw,1.1875rem);max-width:70ch}
+
+/* ---------- allure : ton niveau ---------- */
+.niveau{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(28px,5vw,64px);align-items:start}
+.niveau .big{display:block;font-family:var(--f-display);font-size:clamp(4.5rem,12vw,8rem);line-height:.8;color:var(--cyan);font-variant-numeric:tabular-nums}
+.niveau .big + p{margin-top:14px;max-width:44ch}
+.echelle{list-style:none;margin:0;padding:0;border-top:1px solid var(--hair)}
+.echelle li{display:grid;grid-template-columns:4.5rem minmax(0,1fr) auto;gap:12px;align-items:baseline;padding:10px 12px;border-bottom:1px solid var(--hair-soft)}
+.echelle .pts{font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--muted)}
+.echelle .lib{font-size:.875rem;color:var(--muted)}
+.echelle .tps{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.echelle li:first-child .tps{color:var(--orange)}
+.echelle li.moi{background:var(--cyan);color:var(--night);border-bottom-color:var(--cyan)}
+.echelle li.moi .pts,.echelle li.moi .lib{color:var(--night);font-weight:600}
+
+/* ---------- allure : séance ---------- */
+.section-head .btn{margin-left:auto;align-self:center}
+.intro-seance{font-family:var(--f-mono);font-size:.875rem;color:var(--muted)}
+.seance{min-width:560px}
+.seance tbody th{font-family:var(--f-display);font-weight:400;text-transform:uppercase;font-size:1.125rem;white-space:nowrap;vertical-align:baseline}
+.seance tr.fort th,.seance tr.fort td{color:var(--cyan)}
+
+/* ---------- disciplines : frise ---------- */
+.frise-axe{position:relative;height:40px;margin:8px 8px 28px}
+.frise-axe::before{content:"";position:absolute;left:0;right:0;top:8px;height:1px;background:var(--hair)}
+.frise-axe .dot{position:absolute;top:3px;width:11px;height:11px;margin-left:-5.5px;background:var(--cyan);border-radius:50%}
+.frise-axe .an{position:absolute;top:22px;font-family:var(--f-mono);font-size:.6875rem;color:var(--muted)}
+.frise-axe .an-debut{left:-8px}
+.frise-axe .an-fin{right:-8px}
+.frise{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--hair);border:1px solid var(--hair)}
+.frise li{background:var(--night);padding:clamp(18px,3vh,28px) clamp(16px,2vw,24px);display:flex;flex-direction:column;gap:6px}
+.frise .an{font-family:var(--f-display);font-size:clamp(2.25rem,4vw,3rem);line-height:.9;color:var(--cyan);font-variant-numeric:tabular-nums}
+.frise .lieu{font-family:var(--f-mono);font-size:.6875rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.frise p{font-size:.9375rem;color:var(--muted);margin-top:6px}
+.frise strong{color:var(--ink);font-weight:600}
+
+/* ---------- disciplines : quiz ---------- */
+.quiz{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:1px;background:var(--hair);border:1px solid var(--hair)}
+.quiz fieldset{background:var(--night);padding:clamp(18px,3vh,28px) clamp(16px,2vw,24px);display:flex;flex-direction:column;gap:4px}
+.quiz legend{float:left;width:100%;margin-bottom:10px;font-family:var(--f-display);text-transform:uppercase;font-size:1.25rem;line-height:1}
+.quiz legend .n{font-family:var(--f-mono);font-size:.75rem;color:var(--cyan);margin-right:10px;vertical-align:.2em}
+.quiz label{display:flex;gap:10px;align-items:flex-start;padding:8px 0;font-size:.9375rem;color:var(--muted);cursor:pointer}
+.quiz input[type="radio"]{accent-color:var(--cyan);width:18px;height:18px;margin:2px 0 0;flex:none}
+.quiz label:has(input:checked){color:var(--ink)}
+.quiz-fin{grid-column:1/-1;background:var(--night);display:flex;flex-wrap:wrap;gap:16px 28px;align-items:center;padding:20px clamp(16px,2vw,24px)}
+.quiz-fin .link-btn{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.1em;text-transform:uppercase}
+.quiz-resultat{grid-column:1/-1;background:var(--night)}
+.quiz-resultat:empty{display:none}
+.quiz-resultat.is-on,.quiz-resultat.is-manque{padding:clamp(22px,4vh,36px) clamp(16px,2vw,24px);display:flex;flex-direction:column;gap:12px}
+.quiz-resultat.is-on{border-top:2px solid var(--cyan)}
+.quiz-resultat.is-manque{border-top:2px solid var(--orange);color:var(--ink)}
+.quiz-nom{font-family:var(--f-display);text-transform:uppercase;font-size:clamp(2.5rem,7vw,4.5rem);line-height:.85;color:var(--cyan)}
+.quiz-resultat p{max-width:64ch}
+.quiz-resultat a{color:var(--cyan)}
+
+/* ---------- pied de page ---------- */
+footer{
+  border-top:1px solid var(--hair);
+  padding:40px var(--gutter) calc(48px + env(safe-area-inset-bottom,0px));
+  display:flex;flex-wrap:wrap;gap:16px 28px;align-items:center;
+  font-family:var(--f-mono);font-size:.6875rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+}
+footer .end{margin-left:auto;text-decoration:none;color:var(--cyan)}
+
+/* ============================================================
+   DÉGRADATIONS
+   ============================================================ */
+@media (max-width:860px){
+  .nage,.pace{grid-template-columns:minmax(0,1fr)}
+  .nage-id{display:flex;align-items:flex-end;gap:18px}
+  .nage-id .num{font-size:5rem}
+  .nage-id h2{margin-top:0}
+  .duo,.disc{grid-template-columns:minmax(0,1fr)}
+  .duo > div + div,.disc article:nth-child(even){padding-left:0;border-left:0}
+  .duo > div + div{margin-top:clamp(28px,5vh,48px);border-top:1px solid var(--hair)}
+  .disc article{padding-right:0}
+  .kcal{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .figures{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .niveau{grid-template-columns:minmax(0,1fr)}
+  .frise{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .phases{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pool{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:640px){
+  /* Barre sur deux lignes : le nom, puis les 4 liens sur toute la largeur.
+     Sur une ligne, « Disciplines » sortait de l'écran dès 360 px. */
+  :root{--track:320vh;--bar-h:92px}
+  @supports (height:100svh){ :root{--track:320svh} }
+  .mini{flex-wrap:wrap;align-content:center;row-gap:2px}
+  /* 39 caractères en mono 11 px : ~7 px chacun avec .04em d'espacement, soit
+     ~307 px avec les marges internes, pour 328 px disponibles à 360 px de large */
+  .mini nav{margin-left:-4px;width:calc(100% + 8px);justify-content:space-between}
+  .mini nav a{padding:8px 4px;letter-spacing:.04em}
+  .title{font-size:clamp(3rem,15vw,4.5rem)}
+  .below{padding-top:20px;gap:14px}
+  /* 2 × 2 au lieu d'une colonne de 4 : la colonne dépassait du bas de l'écran
+     sur les petits téléphones (iPhone SE : 4 liens coupés au dernier) */
+  .hero-nav{display:grid;grid-template-columns:1fr 1fr;column-gap:16px}
+  .hero-nav a{margin-right:0;padding:9px 0;border-bottom:1px solid var(--hair-soft)}
+  .hero-data{display:none}
+  .stroke{grid-template-columns:auto 1fr;row-gap:10px}
+  .stroke .v{grid-column:2;text-align:left}
+  .lane{grid-template-columns:92px minmax(0,1fr) 76px}
+  .lane-name{padding-inline:10px}
+  .lane-name b{font-size:1.0625rem}
+  .lane-time{padding-inline:8px}
+  .lane-time .chrono{font-size:.875rem}
+  .race-swimmer{width:48px;height:15px;margin-top:-7.5px}
+  .kcal div{padding:16px}
+  .figures .big{font-size:2.5rem}
+  .phases{grid-template-columns:minmax(0,1fr)}
+  .pool .facts{grid-template-columns:minmax(0,1fr)}
+  .mark50 span{font-size:.625rem}
+  .frise{grid-template-columns:minmax(0,1fr)}
+  .echelle li{grid-template-columns:3.5rem minmax(0,1fr) auto;padding:10px 8px}
+}
+
+@media (max-width:374px){
+  .mini nav a{font-size:.625rem;letter-spacing:0}
+}
+
+/* Écrans bas (téléphone à l'horizontale, petit téléphone) : le texte sous la
+   ligne d'eau n'a que ~40 % de la hauteur. On garde le menu, on retire le reste. */
+@media (max-height:600px){
+  .lede,.hero-data{display:none}
+  .below{padding-top:16px}
+}
+
+/* Sans JS : on affiche tout, rien n'est caché par défaut. Le monde et le nageur
+   ne sont placés que par le script : sans lui, ils s'affichaient en vrac (écume,
+   morceau du nageur dans le coin, ligne d'eau décalée du titre). On garde le
+   titre sur fond de nuit. Les passages de l'allure n'existent pas non plus. */
+.no-js .scene{height:100vh;height:100svh}
+.no-js .world,.no-js .swimmer,.no-js .cue{display:none}
+.no-js .mini{opacity:1;transform:none;pointer-events:auto}
+.no-js .splits-head,.no-js .needs-js{display:none}
+
+/* Impression de la séance : elle seule, en noir sur blanc */
+@media print{
+  html,body{background:#fff !important;color:#000 !important}
+  body *{visibility:hidden}
+  #seance,#seance *{visibility:visible}
+  #seance{position:absolute;left:0;top:0;width:100%;padding:0}
+  #seance *{color:#000 !important;background:transparent !important;opacity:1 !important;transform:none !important}
+  #seance th,#seance td{border-bottom:1px solid #999}
+  .no-print{display:none !important}
+  .seance{min-width:0}
+}
+
+/* Pas de règle « prefers-reduced-motion » : choix de Pierre (16/09/2026), le site
+   anime pour tout le monde. Chaque page pose la classe force-motion dans son <head>. */
