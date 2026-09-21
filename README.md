@@ -1,5 +1,7 @@
 # Coulée
 
+![Aperçu du projet](apercu.jpg)
+
 Refonte complète de mon tout premier site, [Lanatation.fr](https://github.com/Pierre-Dunand-Chatellet/Lanatation.fr),
 fait quand j'avais 13 ans. Même sujet, la natation, sept ans de pratique en plus.
 
