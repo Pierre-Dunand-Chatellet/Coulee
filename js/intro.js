@@ -4,14 +4,16 @@
   /* ---------------------------------------------------------
      Repères du monde (unités SVG)
      --------------------------------------------------------- */
+  var NG       = window.NAGEUR;          // le squelette du nageur (js/nageur.js)
   var SURFACE  = 540;                    // ligne d'eau
-  // y calculé, pas choisi : le point le plus bas de la pose accroupie (pied à
-  // y=62, demi-trait 14, soit 76) doit reposer sur le plateau du plot, qui est
-  // à y≈335 sous le nageur. 335 − 76 = 259.
-  var START    = { x: 2030, y: 259 };    // nageur sur le plot, pieds sur le plateau
+  // Le point de référence du nageur est le milieu de son tronc. Sa pose accroupie
+  // est écrite par rapport à ce point (DEPART dans nageur.js) pour que ses mains
+  // tombent sur la lèvre du plateau et ses pieds posent dessus : rien à régler ici.
+  var START    = { x: NG.DEPART.x, y: NG.DEPART.y };
   var ENTRY    = { x: 1070, y: SURFACE };
   var GLIDE_Y  = 610;                    // profondeur atteinte en fin de coulée
-  var SWIMMER_TAIL = 196;                // bout des pieds de la pose 03, à droite du point de référence
+  // bout des pieds de la pose de coulée, à droite du point de référence
+  var SWIMMER_TAIL = Math.ceil(NG.etendue(2).droite);
 
   // ancrages exprimés en fraction d'écran : indépendants du viewport
   var ANCHOR_X = 0.76;   // le nageur à l'écran pendant le vol
@@ -58,11 +60,7 @@
   var copy    = document.getElementById('heroCopy');
   var cue     = document.getElementById('cue');
   var mini    = document.getElementById('mini');
-  var poses   = [
-    document.getElementById('pose-a'),
-    document.getElementById('pose-b'),
-    document.getElementById('pose-c')
-  ];
+  var corps   = document.getElementById('corps');
   var chevrons = [].slice.call(document.querySelectorAll('#splash .ch'));
 
   /* ---------------------------------------------------------
@@ -91,8 +89,7 @@
 
     // le nageur doit avoir quitté le cadre à 95 % de la coulée, quel que soit l'écran.
     // « Quitté » = ses PIEDS sortis, pas son point de référence : en pose de coulée
-    // ils sont 196 unités à droite de lui (pointe à x=180 + demi-trait 16). Avec
-    // l'ancien −120, il restait une vingtaine d'unités de pieds au bord gauche.
+    // ils sont SWIMMER_TAIL unités à droite de lui (pointe des orteils comprise).
     var exit = -(SWIMMER_TAIL + 12) - lockCamX();
     glideEnd = ENTRY.x + (exit - ENTRY.x) / 0.95;
 
@@ -177,7 +174,7 @@
   /* ---------------------------------------------------------
      Écriture (transform + opacity uniquement, et rien d'inutile)
      --------------------------------------------------------- */
-  var last = { world: '', swimmer: '', poses: [-1, -1, -1], chev: [], cue: null, mini: null, settled: null };
+  var last = { world: '', swimmer: '', pose: '', chev: [], cue: null, mini: null, settled: null };
   var revealed = false;
   var done = false;     // la séquence a été jouée jusqu'au bout : elle ne rejoue plus
 
@@ -186,6 +183,25 @@
     if (store[i] === v) return;
     store[i] = v;
     el.style.opacity = v;
+  }
+
+  // Avancement du corps : 0 = accroupi sur le plot, 1 = extension, 2 = coulée.
+  // La sortie du plot est explosive (les jambes et les bras se détendent d'un coup),
+  // le resserrement en flèche avant l'entrée est plus doux.
+  var P_EXT = 0.15, P_STREAM = 0.27;
+  function poseAt(p) {
+    var a = 1 - Math.pow(1 - norm(p, P_FLY_A, P_EXT), 2.2);
+    var b = norm(p, P_EXT, P_STREAM);
+    return a + b * b * (3 - 2 * b);
+  }
+
+  // Coup de jambes de dauphin sous l'eau : mêmes deux cycles que l'ondulation
+  // verticale du nageur, les jambes un peu en retard sur la hanche. Nul à l'entrée
+  // dans l'eau et à la sortie du cadre.
+  function ondeAt(p) {
+    var u = norm(p, P_LOCK, P_GLIDE_END);
+    var enveloppe = norm(p, 0.44, 0.5) * (1 - norm(p, 0.6, P_GLIDE_END));
+    return enveloppe * Math.sin(u * Math.PI * 4 - 1.1);
   }
 
   function render(p) {
@@ -199,12 +215,10 @@
     var sw = 'translate3d(' + sx.toFixed(2) + 'px,' + sy.toFixed(2) + 'px,0) scale(' + k.toFixed(4) + ') rotate(' + s.rot.toFixed(2) + 'deg)';
     if (sw !== last.swimmer) { swimmer.style.transform = sw; last.swimmer = sw; }
 
-    // permutation des 3 silhouettes, avec un court fondu croisé
-    var a = 1 - norm(p, 0.10, 0.12);
-    var c = norm(p, 0.20, 0.22);
-    setOpacity(poses[0], a, last.poses, 0);
-    setOpacity(poses[1], (1 - a) * (1 - c), last.poses, 1);
-    setOpacity(poses[2], c, last.poses, 2);
+    // le corps : une pose mélangée (accroupi → extension → coulée), pas un fondu entre silhouettes
+    var tp = poseAt(p), on = ondeAt(p);
+    var cle = tp.toFixed(3) + ' ' + on.toFixed(3);
+    if (cle !== last.pose) { NG.appliquer(corps, tp, on); last.pose = cle; }
 
     // écume : chaque chevron a sa propre fenêtre
     for (var i = 0; i < chevrons.length; i++) {
@@ -312,7 +326,7 @@
     scene.classList.remove('is-settled');
     last.world = last.swimmer = '';
     last.cue = last.mini = last.settled = null;
-    last.poses = [-1, -1, -1];
+    last.pose = '';
     last.chev = [];
     try { window.scrollTo({ top: 0, behavior: 'instant' }); }
     catch (e) { window.scrollTo(0, 0); }

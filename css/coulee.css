@@ -347,7 +347,7 @@ legend{padding:0;margin-bottom:8px}
 /* ligne de fond du couloir, et mur d'arrivée */
 .track::before{content:"";position:absolute;left:0;right:0;top:50%;height:4px;margin-top:-2px;background:#04101D;opacity:.9}
 .track::after{content:"";position:absolute;right:0;top:0;bottom:0;width:2px;background:var(--cyan);opacity:.45}
-.race-swimmer{position:absolute;left:0;top:50%;width:72px;height:22px;margin-top:-11px;will-change:transform}
+.race-swimmer{position:absolute;left:0;top:50%;width:112px;height:16px;margin-top:-8px;will-change:transform}
 .race-swimmer svg{display:block;width:100%;height:100%;overflow:visible}
 .lane-time{
   font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right;
@@ -540,7 +540,7 @@ footer a:not(.end):hover{color:var(--cyan)}
   .lane-name b{font-size:1.0625rem}
   .lane-time{padding-inline:8px}
   .lane-time .chrono{font-size:.875rem}
-  .race-swimmer{width:48px;height:15px;margin-top:-7.5px}
+  .race-swimmer{width:72px;height:10px;margin-top:-5px}
   .kcal div{padding:16px}
   .figures .big{font-size:2.5rem}
   .phases{grid-template-columns:minmax(0,1fr)}
