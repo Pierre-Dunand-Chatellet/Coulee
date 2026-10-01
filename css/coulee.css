@@ -210,7 +210,7 @@ a{color:inherit}
 .btn:active{transform:scale(.97)}
 @media (hover:hover) and (pointer:fine){ .btn:hover{background-color:#5CEBD8} }
 .link-btn{
-  font:inherit;color:var(--cyan);background:none;border:0;padding:0;cursor:pointer;
+  font:inherit;color:var(--cyan);background:none;border:0;padding:5px 0;cursor:pointer;
   text-transform:inherit;letter-spacing:inherit;
 }
 
@@ -493,6 +493,9 @@ footer{
   font-family:var(--f-mono);font-size:.6875rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
 }
 footer .end{margin-left:auto;text-decoration:none;color:var(--cyan)}
+footer a{padding:5px 0}
+footer a:not(.end){color:inherit;text-underline-offset:3px}
+footer a:not(.end):hover{color:var(--cyan)}
 
 /* ============================================================
    DÉGRADATIONS
