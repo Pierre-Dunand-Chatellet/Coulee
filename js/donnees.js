@@ -1,11 +1,11 @@
 /* ============================================================
-   COULÉE — données partagées
+   COULÉE, données partagées
    SEULE source des records : les pages les écrivent aussi en dur dans le HTML
    (pour qu'elles restent lisibles sans JavaScript), et ce fichier réécrit
    toutes les cases marquées data-rec au chargement. Un record tombe :
    on ne change que cette table.
 
-   Records du monde du 50 m, grand bassin — vérifiés le 16/09/2026
+   Records du monde du 50 m, grand bassin, vérifiés le 16/09/2026
    (World Aquatics, Wikipedia « List of world records in swimming »,
    recoupés avec la presse pour les trois records de 2026).
    ============================================================ */
@@ -36,7 +36,7 @@
 
   var NOMS = { papillon: 'Papillon', dos: 'Dos', brasse: 'Brasse', crawl: 'Nage libre' };
 
-  // Records du monde de NAGE LIBRE, grand bassin, 100 à 1500 m — vérifiés le
+  // Records du monde de NAGE LIBRE, grand bassin, 100 à 1500 m, vérifiés le
   // 16/09/2026 (Wikipedia + presse pour Liebmann et Steenbergen, 2026).
   // « nom » = nom de famille affiché dans le couloir ; en chinois il vient EN PREMIER
   // (Pan Zhanle → Pan, Zhang Lin → Zhang), d'où un champ explicite plutôt qu'un découpage.

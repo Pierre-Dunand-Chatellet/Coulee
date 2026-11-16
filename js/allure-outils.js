@@ -1,5 +1,5 @@
 /* ============================================================
-   COULÉE — outils sous le calculateur d'allure
+   COULÉE, outils sous le calculateur d'allure
    1. Toi contre le record   2. Ton niveau (points World Aquatics)
    3. Séance générée
    Écoute l'événement « allure:maj » envoyé par js/allure.js ; ce fichier doit
@@ -157,7 +157,7 @@
   if (vs.btn) vs.btn.addEventListener('click', lancer);
 
   /* =========================================================
-     2. TON NIVEAU — barème World Aquatics 2026
+     2. TON NIVEAU, barème World Aquatics 2026
      ========================================================= */
   var niv = {
     points: document.getElementById('niv-points'),

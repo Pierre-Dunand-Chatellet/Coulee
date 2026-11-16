@@ -18,7 +18,7 @@
   // ancrages exprimés en fraction d'écran : indépendants du viewport
   var ANCHOR_X = 0.76;   // le nageur à l'écran pendant le vol
   var LOCK_X   = 0.66;   // le point d'entrée, une fois la caméra calée
-  var LOCK_Y   = 0.58;   // la ligne d'eau — la caméra ne bouge JAMAIS en Y :
+  var LOCK_Y   = 0.58;   // la ligne d'eau, la caméra ne bouge JAMAIS en Y :
                          // un panoramique horizontal, comme une caméra de bassin.
 
   // bornes de phases
@@ -97,7 +97,7 @@
     // « meet » est le point où le cadrage verrouillé encadrerait le nageur
     // exactement à son ancre : avant, se caler le ferait repartir vers la
     // droite ; après, la caméra aurait dépassé le verrou. La caméra doit donc
-    // être À L'ARRÊT pile à ce rendez-vous — donc commencer à freiner avant.
+    // être À L'ARRÊT pile à ce rendez-vous, donc commencer à freiner avant.
     // Avec une vitesse qui décroît linéairement, la distance parcourue vaut la
     // moitié de celle du suivi : le freinage démarre à 2·meet − verrou.
     var meet = ENTRY.x + (ANCHOR_X - LOCK_X) * vw / k;
@@ -117,7 +117,7 @@
   // Le corps suit la pente de sa PROPRE trajectoire : rien n'est réglé à la main,
   // donc il ne peut plus entrer par les pieds. Attention au signe : le nageur est
   // dessiné tourné vers la gauche, et en SVG une rotation positive fait descendre
-  // le côté droit — c'est donc un angle NÉGATIF qui lui met la tête en bas.
+  // le côté droit, c'est donc un angle NÉGATIF qui lui met la tête en bas.
   // +16,4° au décollage (il monte encore), −41,3° à l'entrée (valeurs calculées).
   function flightAngle(t) {
     var vx = ENTRY.x - START.x;
@@ -163,8 +163,8 @@
     // elle suit le nageur : sa position écran en X est constante par construction
     if (p <= pFollowEnd) return { x: ANCHOR_X * vw / k - swimmerAt(p).x, y: camY };
 
-    // ... puis elle freine. La vitesse part exactement à celle du suivi — aucun
-    // à-coup au raccord — et tombe à zéro pile sur le verrou : la caméra
+    // ... puis elle freine. La vitesse part exactement à celle du suivi, aucun
+    // à-coup au raccord, et tombe à zéro pile sur le verrou : la caméra
     // s'immobilise au lieu de buter, et le nageur se met à glisser hors de son
     // ancre, de 76 % à 66 % de la largeur, sans jamais repartir en arrière.
     var t = norm(p, pFollowEnd, P_LOCK);
@@ -255,10 +255,10 @@
   function setSeen(v) { try { if (v) sessionStorage.setItem(SEEN_KEY, '1'); else sessionStorage.removeItem(SEEN_KEY); } catch (e) {} }
 
   // Fin de séquence : on retire la piste de scroll et on remonte le scroll de
-  // la hauteur retirée — l'écran ne bouge pas d'un pixel, mais il n'y a plus
+  // la hauteur retirée, l'écran ne bouge pas d'un pixel, mais il n'y a plus
   // rien au-dessus du hero. Position ABSOLUE et « instant » : le html a un
   // scroll-behavior:smooth qui ferait glisser la page, et l'ancrage de scroll du
-  // navigateur a pu compenser de son côté — une cible absolue reste juste.
+  // navigateur a pu compenser de son côté, une cible absolue reste juste.
   function finish(y) {
     done = true;
     setSeen(true);
@@ -291,7 +291,7 @@
 
   // « Aller au contenu » pendant le plongeon : le défilement doux vers #contenu
   // traversait la fin de séquence, et finish() le coupait net avec un scrollTo
-  // instantané — on atterrissait en haut du hero. On termine la séquence AVANT
+  // instantané, on atterrissait en haut du hero. On termine la séquence AVANT
   // que le navigateur ne calcule la destination du lien.
   var skip = document.querySelector('.skip');
   if (skip) skip.addEventListener('click', function () {

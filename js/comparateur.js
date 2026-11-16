@@ -1,5 +1,5 @@
 /* ============================================================
-   COULÉE — comparateur : course des records, tableau, calories
+   COULÉE, comparateur : course des records, tableau, calories
    Dépend de js/donnees.js (window.COULEE).
    ============================================================ */
 (function () {

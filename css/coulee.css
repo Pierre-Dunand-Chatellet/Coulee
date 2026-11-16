@@ -1,5 +1,5 @@
 /* ============================================================
-   COULÉE — feuille commune
+   COULÉE, feuille commune
    Identité « immersif nuit » : bleu nuit, cyan des flotteurs, orange
    réservé aux records. Angles droits, filets fins, chiffres en mono.
    ============================================================ */
@@ -15,7 +15,7 @@
   --hair-soft:rgba(234,242,255,.10);
 
   --f-display:"Anton","Arial Narrow",Impact,sans-serif;
-  --f-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-body:"Schibsted Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
 
   --ease-out:cubic-bezier(.23,1,.32,1);
@@ -152,7 +152,7 @@ a{color:inherit}
 /* Tant que le texte n'est pas révélé, ses LIENS sont invisibles : ils ne doivent
    ni se cliquer au milieu du plongeon, ni recevoir le focus clavier. Seulement
    les liens : visibility:hidden sur tout le bloc retirait aussi le h1 et le
-   paragraphe de l'arbre d'accessibilité — la page n'avait plus de titre pour un
+   paragraphe de l'arbre d'accessibilité, la page n'avait plus de titre pour un
    lecteur d'écran. Eux restent en simple opacity:0 (.reveal). */
 .js .hero-copy:not(.is-in) .hero-nav{visibility:hidden}
 .copy-rail{
@@ -584,3 +584,30 @@ footer a:not(.end):hover{color:var(--cyan)}
 
 /* Pas de règle « prefers-reduced-motion » : choix de Pierre (16/09/2026), le site
    anime pour tout le monde. Chaque page pose la classe force-motion dans son <head>. */
+
+/* ============================================================
+   NETTOYAGE DU 2026-11-14
+   Même Coulée (nuit sous l'eau, cyan, Anton, corde de couloir), sans
+   les tics : texte en Schibsted Grotesk (la police du portfolio), plus de
+   petites capitales mono espacées pour les étiquettes, plus d'apparition
+   au défilement (le plongeon de l'accueil reste, lui, piloté au défilement).
+   Le mono ne sert plus qu'aux temps, aux distances et aux formules.
+   ============================================================ */
+.label,.skip,.cue,.mini nav a,.hero-data,.btn,.stroke .v small,.facts dt,.seg label,
+.lane-name small,.lane-time .place,thead th,.kcal .unit,.field label,.fig span,
+.frise .lieu,.quiz-fin .link-btn,footer{
+  font-family:var(--f-body);letter-spacing:0;text-transform:none;
+}
+.label{font-size:.9375rem;font-weight:600}
+.mini nav a{font-size:.9375rem;font-weight:500}
+.hero-data,.field label,.facts dt,thead th,.fig span,.frise .lieu,.lane-name small,.lane-time .place,.stroke .v small{font-size:.875rem}
+.btn,.seg label,.quiz-fin .link-btn,.skip{font-size:.9375rem;font-weight:600}
+footer{font-size:.875rem}
+.cue{font-size:.9375rem}
+.stroke .n,.phases .at{letter-spacing:0}
+.js .reveal{opacity:1;transform:none;transition:none}
+/* barre du haut : fond plein au lieu du verre dépoli */
+.mini{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--night)}
+@media (max-width:640px){ .mini nav a{font-size:.875rem;letter-spacing:0} }
+footer .auteur{display:inline-flex;align-items:center;gap:8px;color:var(--ink);font-weight:600}
+footer .auteur svg{width:20px;height:20px}

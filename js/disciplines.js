@@ -1,5 +1,5 @@
 /* ============================================================
-   COULÉE — quiz « Laquelle pour toi ? »
+   COULÉE, quiz « Laquelle pour toi ? »
    Chaque réponse donne un point à une discipline ; la ou les disciplines en
    tête l'emportent. Pas de hasard : à réponses égales, résultat identique.
    ============================================================ */

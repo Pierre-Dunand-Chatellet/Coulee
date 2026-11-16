@@ -1,5 +1,5 @@
 /* ============================================================
-   COULÉE — commun à toutes les pages : apparition des blocs
+   COULÉE, commun à toutes les pages : apparition des blocs
    ============================================================ */
 (function () {
   'use strict';

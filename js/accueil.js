@@ -1,5 +1,5 @@
 /* ============================================================
-   COULÉE — accueil : compteur en direct et passage au 25 m
+   COULÉE, accueil : compteur en direct et passage au 25 m
    Dépend de js/donnees.js (window.COULEE).
    ============================================================ */
 (function () {
@@ -18,7 +18,7 @@
 
   // performance.now() part du chargement de la page : c'est « depuis ton arrivée ».
   // On n'écrit que quand le chiffre change (1 fois toutes les ~0,4 s), et pas du
-  // tout quand l'onglet est caché — le calcul reste juste au retour, il repart
+  // tout quand l'onglet est caché, le calcul reste juste au retour, il repart
   // de l'horloge et non d'un compteur incrémenté.
   var shown = -1;
   function tick() {

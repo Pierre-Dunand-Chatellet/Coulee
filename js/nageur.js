@@ -49,18 +49,18 @@
   var DEPART = { x: 1990, y: 232 };
 
   var POSES_BRUTES = [
-    { // A — accroupi sur le plot, mains à la lèvre du plateau
+    { // A, accroupi sur le plot, mains à la lèvre du plateau
       monde: true,
       hanche: [2052, 234], bassin: 161, rachis: 161, cou: 205, face: 142,
       brasN: { poignet: [1965, 351], main: 96 }, brasF: { poignet: [1972, 352], main: 93 },
       jambeN: { cheville: [1999.8, 341.1], pied: 162.6 }, jambeF: { cheville: [2028, 334.5], pied: 162.6 }
     },
-    { // B — extension, le corps s'ouvre : dos cambré, bras qui partent devant, jambes qui traînent
+    { // B, extension, le corps s'ouvre : dos cambré, bras qui partent devant, jambes qui traînent
       hanche: [43, 2], bassin: 178, rachis: 189, cou: 196, face: 178,
       brasN: { a: 207, r: 100, main: 205 }, brasF: { a: 203, r: 100, main: 201 },
       jambeN: { a: 14, r: 142, pied: 32 }, jambeF: { a: 18, r: 142, pied: 36 }
     },
-    { // C — la coulée : bras tendus, tête entre les bras, jambes jointes, pointes
+    { // C, la coulée : bras tendus, tête entre les bras, jambes jointes, pointes
       hanche: [43, 8], bassin: 181, rachis: 182, cou: 189, face: 170,
       brasN: { a: 188, r: 102, main: 187 }, brasF: { a: 186, r: 102, main: 185 },
       jambeN: { a: 3, r: 148, pied: 5 }, jambeF: { a: 5, r: 148, pied: 7 }
